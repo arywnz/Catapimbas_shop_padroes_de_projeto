@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catapimbas Shop — Painel de Vendas</title>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+  <header>
+    <div class="logo-container">
+      <div class="logo-text">Catapimbas Shop</div>
+      <div class="logo-tag">Checkout</div>
+    </div>
+    <div class="status-badge">
+      <span class="status-dot" id="ponto-status"></span>
+      <span id="texto-status">Buscando APIs...</span>
+    </div>
+  </header>
+
+  <main>
+    
+    <div class="card">
+      <div class="section-title">Carrinho</div>
+      
+      <div class="cart-item">
+        <img class="cart-item-img" src="notebook_gamer.png" alt="Notebook Acer Predator" onerror="this.src='https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=150&q=80'">
+        <div class="cart-item-info">
+          <div class="cart-item-title">Notebook Acer Predator</div>
+          <div class="cart-item-price">R$ 8.999,90</div>
+        </div>
+      </div>
+
+      <form id="form-checkout" onsubmit="processarCheckout(event)">
+        <div class="form-group">
+          <label for="nomeCliente">Nome Completo</label>
+          <input type="text" id="nomeCliente" placeholder="Ex: João Victor" required>
+        </div>
+
+        <div class="form-group">
+          <label for="emailCliente">E-mail</label>
+          <input type="email" id="emailCliente" placeholder="joaovictor@gmail.com" required>
+          <div id="analise-email" style="display:none; font-size: 0.75rem; border-radius: 6px; padding: 0.4rem 0.6rem; margin-top: 0.35rem; line-height: 1.4; font-weight: 500;"></div>
+        </div>
+
+        <div class="form-row split-cep">
+          <div class="form-group">
+            <label for="tipoEntrega">Envio</label>
+            <select id="tipoEntrega" required>
+              <option value="correios">Correios (PAC) — R$ 25,90</option>
+              <option value="transportadora">Transportadora — R$ 18,50</option>
+              <option value="retirada">Retirada na Loja — R$ 0,00</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="cep">CEP</label>
+            <input type="text" id="cep" placeholder="24903-795" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="metodoPagamento">Forma de Pagamento</label>
+          <select id="metodoPagamento" required>
+            <option value="Cartão de Crédito">Cartão de Crédito</option>
+            <option value="Pix">Pix (Instantâneo)</option>
+            <option value="Boleto Bancário">Boleto Bancário</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-checkout">
+          Finalizar Compra
+        </button>
+      </form>
+    </div>
+
+    <!-- Column 2: Registered Orders & API Connection -->
+    <div class="card">
+      <div class="section-title">
+        Pedidos Registrados
+        <span class="badge" id="contador-pedidos">0</span>
+      </div>
+      
+      <div style="background-color: rgba(37, 99, 235, 0.1); border: 1px solid rgba(37, 99, 235, 0.3); border-radius: 10px; padding: 0.8rem 1rem; font-size: 0.8rem; line-height: 1.5; color: #93c5fd; display: flex; flex-direction: column; gap: 0.35rem; flex-shrink: 0;">
+        <p style="margin: 0; color: #d1d5db;">
+          Saudações, professor, após realizar a compra, o senhor pode simular o ciclo de vida completo do pedido (Aprovação, Separação, Transporte e Entrega) clicando no botão <strong style="color: #60a5fa; font-weight: 700;">"Avançar"</strong> na tabela abaixo. Isso atualizará o status e disparará os e-mails/logs em realtime.
+        </p>
+      </div>
+
+      <div class="order-table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Produto</th>
+              <th>Valor</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="lista-pedidos">
+            <tr>
+              <td colspan="5" class="empty-state" style="text-align: center;">Nenhum pedido realizado ainda.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Config connections integrated here at the bottom of col 2 -->
+      <div class="panel-config">
+        <div class="config-title">Configurações de Conexão</div>
+        <div class="config-row">
+          <div class="config-inputs">
+            <div class="form-group">
+              <input type="text" id="url-api-pedidos" value="http://localhost:3001" placeholder="Pedidos API">
+            </div>
+            <div class="form-group">
+              <input type="text" id="url-api-notificacoes" value="http://localhost:3002" placeholder="Notificações API">
+            </div>
+          </div>
+          <button class="btn-connect" onclick="testarConexao()">Conectar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Column 3: Live Singleton Terminal Logger -->
+    <div class="card">
+      <div class="section-title">
+        Logs de Notificação
+        <span class="badge" style="background-color: var(--card-border); color: var(--text-secondary)">Singleton</span>
+      </div>
+      
+      <div class="terminal-logs" id="lista-logs">
+        <div class="empty-state">Aguardando logs...</div>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast-container" id="recipiente-toast"></div>
+
+  <footer>
+    <p>© 2026 Catapimbas Shop  </p>
+  </footer>
+
+  <script>
+    let listaPedidos = [];
+    
+    function mostrarNotificacao(mensagem, tipo = 'success') {
+      const container = document.getElementById('recipiente-toast');
+      const toast = document.createElement('div');
+      toast.className = `toast ${tipo}`;
+      toast.textContent = mensagem;
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    function obterUrlApiPedidos() {
+      return document.getElementById('url-api-pedidos').value.trim();
+    }
+
+    function obterUrlApiNotificacoes() {
+      return document.getElementById('url-api-notificacoes').value.trim();
+    }
+
+    async function testarConexao() {
+      const dot = document.getElementById('ponto-status');
+      const text = document.getElementById('texto-status');
+      dot.className = 'status-dot';
+      text.textContent = 'Buscando APIs...';
+
+      try {
+        const orderRes = await fetch(`${obterUrlApiPedidos()}/saude`);
+        const notifRes = await fetch(`${obterUrlApiNotificacoes()}/saude`);
+
+        if (orderRes.ok && notifRes.ok) {
+          dot.className = 'status-dot online';
+          text.textContent = 'Conectado';
+          mostrarNotificacao('Conectado aos microsserviços com sucesso!');
+          await carregarPedidos();
+          await carregarLogs();
+        } else {
+          throw new Error('Falha');
+        }
+      } catch (err) {
+        dot.className = 'status-dot offline';
+        text.textContent = 'Offline';
+        mostrarNotificacao('Não foi possível conectar às APIs locais.', 'error');
+      }
+    }
+
+    async function processarCheckout(event) {
+      event.preventDefault();
+      
+      const payload = {
+        nomeCliente: document.getElementById('nomeCliente').value,
+        produto: 'Notebook Acer Predator',
+        valor: 8999.90,
+        metodoPagamento: document.getElementById('metodoPagamento').value,
+        tipoEntrega: document.getElementById('tipoEntrega').value,
+        cep: document.getElementById('cep').value,
+        email: document.getElementById('emailCliente').value
+      };
+
+      try {
+        const response = await fetch(`${obterUrlApiPedidos()}/finalizar-compra`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        
+        if (response.ok) {
+          mostrarNotificacao(`Pedido #${data.idPedido} finalizado com sucesso!`);
+          document.getElementById('form-checkout').reset();
+          document.getElementById('analise-email').style.display = 'none'; 
+          await carregarPedidos();
+          await carregarLogs();
+        } else {
+          mostrarNotificacao(data.error || 'Falha ao realizar checkout.', 'error');
+        }
+      } catch (err) {
+        mostrarNotificacao('Erro de rede ao processar checkout.', 'error');
+      }
+    }
+
+    async function avancarStatus(idPedido, currentStatus) {
+      const statusCycle = {
+        'AGUARDANDO_PAGAMENTO': 'PAGAMENTO_APROVADO',
+        'PAGAMENTO_APROVADO': 'EM_SEPARACAO',
+        'EM_SEPARACAO': 'ENVIADO',
+        'ENVIADO': 'ENTREGUE',
+        'ENTREGUE': 'ENTREGUE'
+      };
+
+      const nextStatus = statusCycle[currentStatus];
+      if (currentStatus === 'ENTREGUE') {
+        mostrarNotificacao('O pedido já foi entregue ao destinatário!');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${obterUrlApiPedidos()}/pedidos/${idPedido}/status`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ status: nextStatus })
+        });
+
+        if (response.ok) {
+          mostrarNotificacao(`Pedido #${idPedido} atualizado para '${nextStatus}'!`);
+          await carregarPedidos();
+          await carregarLogs();
+        } else {
+          const data = await response.json();
+          mostrarNotificacao(data.error || 'Falha ao atualizar status.', 'error');
+        }
+      } catch (err) {
+        mostrarNotificacao('Erro ao atualizar status do pedido.', 'error');
+      }
+    }
+
+    async function carregarPedidos() {
+      try {
+        const response = await fetch(`${obterUrlApiPedidos()}/pedidos`);
+        if (response.ok) {
+          listaPedidos = await response.json();
+          renderizarPedidos();
+        }
+      } catch (err) {
+        console.error('Error loading orders:', err);
+      }
+    }
+
+    function renderizarPedidos() {
+      const container = document.getElementById('lista-pedidos');
+      const countBadge = document.getElementById('contador-pedidos');
+      countBadge.textContent = listaPedidos.length;
+
+      if (listaPedidos.length === 0) {
+        container.innerHTML = `
+          <tr>
+            <td colspan="5" class="empty-state" style="text-align: center;">Nenhum pedido realizado ainda.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      container.innerHTML = '';
+      listaPedidos.slice().reverse().forEach(pedido => {
+        const tr = document.createElement('tr');
+        
+        let statusClass = 'aguardando';
+        if (pedido.status === 'PAGAMENTO_APROVADO') statusClass = 'aprovado';
+        else if (pedido.status === 'EM_SEPARACAO') statusClass = 'separacao';
+        else if (pedido.status === 'ENVIADO') statusClass = 'enviado';
+        else if (pedido.status === 'ENTREGUE') statusClass = 'entregue';
+
+        tr.innerHTML = `
+          <td style="font-weight:600; color: var(--color-accent)">#${pedido.idPedido}</td>
+          <td>${pedido.produto}</td>
+          <td><strong>R$ ${pedido.valor.toFixed(2)}</strong></td>
+          <td><span class="badge-status ${statusClass}">${pedido.status.replace('_', ' ')}</span></td>
+          <td>
+            ${pedido.status !== 'ENTREGUE' ? `<button class="btn-action" onclick="avancarStatus('${pedido.idPedido}', '${pedido.status}')">Avançar</button>` : '<span style="color: var(--color-success)">Finalizado ✓</span>'}
+          </td>
+        `;
+        container.appendChild(tr);
+      });
+    }
+
+    async function carregarLogs() {
+      try {
+        const response = await fetch(`${obterUrlApiNotificacoes()}/logs`);
+        if (response.ok) {
+          const logs = await response.json();
+          renderizarLogs(logs);
+        }
+      } catch (err) {
+        console.error('Error loading logs:', err);
+      }
+    }
+
+    function renderizarLogs(logs) {
+      const container = document.getElementById('lista-logs');
+      
+      if (!logs || logs.length === 0) {
+        container.innerHTML = '<div class="empty-state">Aguardando logs...</div>';
+        return;
+      }
+
+      container.innerHTML = '';
+      logs.slice().reverse().forEach(log => {
+        const div = document.createElement('div');
+        div.className = 'log-item';
+        
+        const isSms = log.canal === 'sms';
+        const channelClass = isSms ? 'sms' : 'email';
+        
+        div.innerHTML = `
+          <div class="log-meta-line">
+            <span class="log-meta-tag ${channelClass}">${log.canal.toUpperCase()}</span>
+            <span>Hora: ${log.horario}</span>
+          </div>
+          <div style="font-size: 0.8rem; margin: 0.1rem 0;">
+            Destinatário: <span style="color: var(--text-primary); font-weight: 500;">${log.destinatario}</span>
+          </div>
+          <div class="log-content">
+            ${log.mensagem}
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    setInterval(() => {
+      const dot = document.getElementById('ponto-status');
+      if (dot.classList.contains('online')) {
+        carregarPedidos();
+        carregarLogs();
+      }
+    }, 5000);
+
+    document.getElementById('emailCliente').addEventListener('input', function(e) {
+      const email = e.target.value.trim();
+      const analysisBox = document.getElementById('analise-email');
+      
+      if (!email) {
+        analysisBox.style.display = 'none';
+        return;
+      }
+      
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const hasAt = email.includes('@');
+      
+      if (!hasAt) {
+        analysisBox.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+        analysisBox.style.border = '1px solid rgba(239, 68, 68, 0.2)';
+        analysisBox.style.color = '#f87171';
+        analysisBox.innerHTML = `❌ O e-mail precisa conter o caractere '@'`;
+        analysisBox.style.display = 'block';
+        return;
+      }
+      
+      const parts = email.split('@');
+      const user = parts[0];
+      const domain = parts[1] ? parts[1].toLowerCase() : '';
+      
+      if (!domain) {
+        analysisBox.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+        analysisBox.style.border = '1px solid rgba(239, 68, 68, 0.2)';
+        analysisBox.style.color = '#f87171';
+        analysisBox.innerHTML = `❌ Falta informar o domínio do e-mail após o '@'`;
+        analysisBox.style.display = 'block';
+        return;
+      }
+      
+      // corrige algumas formas de digitação errada
+      const typos = {
+        'emaiu.com': 'gmail.com',
+        'emaiu.com.br': 'gmail.com.br',
+        'gamil.com': 'gmail.com',
+        'gamil.com.br': 'gmail.com.br',
+        'gmai.com': 'gmail.com',
+        'gmai.com.br': 'gmail.com.br',
+        'gmail.con': 'gmail.com',
+        'gmail.con.br': 'gmail.com.br',
+        'hotmal.com': 'hotmail.com',
+        'hotmal.com.br': 'hotmail.com.br',
+        'hotmai.com': 'hotmail.com',
+        'hotmai.con': 'hotmail.com',
+        'outlok.com': 'outlook.com',
+        'outlok.con': 'outlook.com',
+        'outlook.con': 'outlook.com'
+      };
+      
+      let correctedDomain = '';
+      if (typos[domain]) {
+        correctedDomain = typos[domain];
+      } else {
+        const lowerDomain = domain.toLowerCase();
+        if ((lowerDomain.includes('gmai') || lowerDomain.includes('gami') || lowerDomain.includes('emai') || lowerDomain.includes('gml'))
+            && lowerDomain !== 'gmail.com' && lowerDomain !== 'gmail.com.br') {
+          correctedDomain = lowerDomain.endsWith('.br') ? 'gmail.com.br' : 'gmail.com';
+        } else if ((lowerDomain.includes('hotm') || lowerDomain.includes('otma') || lowerDomain.includes('horm') || lowerDomain.includes('html'))
+                   && lowerDomain !== 'hotmail.com' && lowerDomain !== 'hotmail.com.br') {
+          correctedDomain = lowerDomain.endsWith('.br') ? 'hotmail.com.br' : 'hotmail.com';
+        } else if ((lowerDomain.includes('outl') || lowerDomain.includes('otlo') || lowerDomain.includes('utlo'))
+                   && lowerDomain !== 'outlook.com' && lowerDomain !== 'outlook.com.br') {
+          correctedDomain = lowerDomain.endsWith('.br') ? 'outlook.com.br' : 'outlook.com';
+        } else if ((lowerDomain.includes('yaho') || lowerDomain.includes('yhoo') || lowerDomain.includes('uaho'))
+                   && lowerDomain !== 'yahoo.com' && lowerDomain !== 'yahoo.com.br') {
+          correctedDomain = lowerDomain.endsWith('.br') ? 'yahoo.com.br' : 'yahoo.com';
+        }
+      }
+      
+      if (correctedDomain) {
+        const correctEmail = user + '@' + correctedDomain;
+        analysisBox.style.backgroundColor = 'rgba(245, 158, 11, 0.1)';
+        analysisBox.style.border = '1px solid rgba(245, 158, 11, 0.2)';
+        analysisBox.style.color = '#fbbf24';
+        analysisBox.innerHTML = `⚠️ Você quis dizer <a href="#" onclick="aplicarSugestaoEmail('${correctEmail}'); return false;" style="color: #60a5fa; text-decoration: underline; font-weight: 600;">${correctEmail}</a>? (Correção de digitação)`;
+        analysisBox.style.display = 'block';
+        return;
+      }
+      
+      if (!emailRegex.test(email)) {
+        analysisBox.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+        analysisBox.style.border = '1px solid rgba(239, 68, 68, 0.2)';
+        analysisBox.style.color = '#f87171';
+        analysisBox.innerHTML = `❌ Formato incompleto (exemplo: usuario@provedor.com)`;
+        analysisBox.style.display = 'block';
+        return;
+      }
+      
+      analysisBox.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+      analysisBox.style.border = '1px solid rgba(16, 185, 129, 0.2)';
+      analysisBox.style.color = '#34d399';
+      analysisBox.innerHTML = `✅ Formato de e-mail válido e verificado`;
+      analysisBox.style.display = 'block';
+    });
+    
+    function aplicarSugestaoEmail(correctEmail) {
+      document.getElementById('emailCliente').value = correctEmail;
+      const analysisBox = document.getElementById('analise-email');
+      analysisBox.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+      analysisBox.style.border = '1px solid rgba(16, 185, 129, 0.2)';
+      analysisBox.style.color = '#34d399';
+      analysisBox.innerHTML = `✅ Formato de e-mail válido e verificado`;
+      mostrarNotificacao('E-mail corrigido com sucesso!');
+    }
+
+    testarConexao();
+  </script>
+</body>
+</html>

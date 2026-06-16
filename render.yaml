@@ -1,0 +1,44 @@
+services:
+  # 1. API
+  - type: web
+    name: catapimbasshop-order-service
+    runtime: docker
+    dockerfilePath: order_service/Dockerfile
+    plan: free
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: FLASK_ENV
+        value: production
+      - key: NOTIFICATION_SERVICE_URL
+        value: https://catapimbasshop-notification-service.onrender.com/eventos
+      - key: DATABASE_URL
+        fromDatabase:
+          name: catapimbasshop-db
+          property: connectionString
+
+  # 2. Notification Service
+  - type: web
+    name: catapimbasshop-notification-service
+    runtime: docker
+    dockerfilePath: notification_service/Dockerfile
+    plan: free
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: FLASK_ENV
+        value: production
+      - key: NOTIFICATION_CHANNEL
+        value: email
+
+  # 3. Frontend 
+  - type: web
+    name: catapimbasshop-frontend
+    runtime: static
+    plan: free
+    publishDir: frontend
+
+databases:
+  - name: catapimbasshop-db
+    plan: free
+

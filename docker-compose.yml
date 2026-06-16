@@ -1,0 +1,32 @@
+services:
+  order-service:
+    build:
+      context: ./order_service
+      dockerfile: Dockerfile
+    container_name: order-service
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./order_service:/usr/src/app
+    environment:
+      - PORT=3001
+      - NOTIFICATION_SERVICE_URL=http://notification-service:3002/eventos
+      - FLASK_ENV=production
+    env_file:
+      - .env
+    depends_on:
+      - notification-service
+
+  notification-service:
+    build:
+      context: ./notification_service
+      dockerfile: Dockerfile
+    container_name: notification-service
+    ports:
+      - "3002:3002"
+    environment:
+      - PORT=3002
+      - NOTIFICATION_CHANNEL=email
+      - FLASK_ENV=production
+    env_file:
+      - .env
