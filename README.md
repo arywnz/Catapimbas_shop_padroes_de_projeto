@@ -138,9 +138,9 @@ Isso iniciará o `order-service` na porta `3001` e o `notification-service` na p
 
 O projeto foi estruturado para deploy instantâneo na plataforma **Render** por meio do arquivo `render.yaml` na raiz do repositório:
 
-* **Link da Aplicação**: `[Inserir link do Render aqui]`
-* **Link da API de Pedidos**: `[Inserir link do Render aqui]/saude`
-* **Link da API de Notificações**: `[Inserir link do Render aqui]/saude`
+* **Link da Aplicação**: `https://catapimbasshop-frontend.onrender.com/`
+* **Link da API de Pedidos**: `https://catapimbasshop-order-service.onrender.com/saude`
+* **Link da API de Notificações**: `https://catapimbasshop-notification-service.onrender.com/saude`
 
 ---
 
