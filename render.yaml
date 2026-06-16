@@ -7,7 +7,7 @@ services:
     plan: free
     envVars:
       - key: PORT
-        value: 10000
+        value: 3001
       - key: FLASK_ENV
         value: production
       - key: NOTIFICATION_SERVICE_URL
@@ -25,7 +25,7 @@ services:
     plan: free
     envVars:
       - key: PORT
-        value: 10000
+        value: 3002
       - key: FLASK_ENV
         value: production
       - key: NOTIFICATION_CHANNEL
