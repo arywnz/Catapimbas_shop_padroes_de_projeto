@@ -32,10 +32,11 @@ services:
         value: email
 
   # 3. Frontend 
-  - type: static
+  - type: web
     name: catapimbasshop-frontend
+    runtime: static
     plan: free
-    publishDir: frontend
+    staticPublishPath: ./frontend
 
 databases:
   - name: catapimbasshop-db
