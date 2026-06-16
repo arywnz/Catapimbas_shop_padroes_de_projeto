@@ -32,9 +32,8 @@ services:
         value: email
 
   # 3. Frontend 
-  - type: web
+  - type: static
     name: catapimbasshop-frontend
-    runtime: static
     plan: free
     publishDir: frontend
 

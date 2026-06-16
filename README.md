@@ -9,7 +9,7 @@ Este repositório contém o projeto **Catapimbas Shop**, uma solução de softwa
 Em e-commerces de alto valor (como lojas de eletrônicos), o processo de checkout envolve múltiplos sistemas: verificação de estoque, integração de pagamentos, cálculo de fretes e envio de avisos de atualização ao cliente, algumas lojas menores frequentemente perdem vendas ou irritam clientes pela lentidão ou falta de rastreio em tempo real.
 
 **A Solução Catapimbas Shop:**
-Uma plataforma baseada em microsserviços onde a criação de pedidos e cálculo de frete são isolados do sistema de comunicação com o cliente. O checkout é simplificado através de um painel web que dispara, de forma instantânea e assíncrona, notificações de confirmação de E-mail (via SMTP) de acordo com o status atualizado do pedido.
+Uma plataforma baseada em microsserviços onde a criação de pedidos e cálculo de frete são isolados do sistema de comunicação com o cliente. O checkout é simplificado através de um painel web que dispara, de forma instantânea e assíncrona, notificações de confirmação de email (via SMTP) de acordo com o status atualizado do pedido.
 
 ---
 
