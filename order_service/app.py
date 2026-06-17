@@ -59,7 +59,7 @@ class IRepositorioPedido(ABC):
 # ADAPTADORES (Adapters)
 # =============================================================================
 
-# Observer Distribuído (Observer Pattern sobre HTTP)
+
 class ObservadorPedidoHttp(ObservadorPedido):
     def __init__(self, url_servico_notificacao: str, nome_cliente: str, email_cliente: str):
         self.url_servico_notificacao = url_servico_notificacao
@@ -102,7 +102,7 @@ class ModeloPedido(db.Model):
     nome_cliente = db.Column(db.String(100), nullable=True)
     email = db.Column(db.String(150), nullable=True)
 
-# Repositório Persistente Relacional SQL
+
 class RepositorioPedidoSql(IRepositorioPedido):
     def salvar(self, pedido: Pedido) -> None:
         modelo = ModeloPedido.query.filter_by(pedido_id=pedido.pedido_id).first()

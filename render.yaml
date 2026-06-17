@@ -18,7 +18,7 @@ services:
           name: catapimbasshop-db
           property: connectionString
 
-  # 2. Notification Service
+  # 2. Sistema de notificação
   - type: web
     name: catapimbasshop-notification-service
     runtime: docker

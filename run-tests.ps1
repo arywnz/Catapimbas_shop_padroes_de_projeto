@@ -1,6 +1,6 @@
 Write-Host "Iniciando build dos containers de teste (E-Commerce Python)..." -ForegroundColor Cyan
 
-# Test order_service
+# Teste de ordem de serviço
 Write-Host "Testando order_service..." -ForegroundColor Yellow
 docker build -t order-service-test ./order_service
 if ($LASTEXITCODE -ne 0) {
@@ -13,7 +13,7 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
-# Test notification_service
+# Teste de notificação
 Write-Host "Testando notification_service..." -ForegroundColor Yellow
 docker build -t notification-service-test ./notification_service
 if ($LASTEXITCODE -ne 0) {
