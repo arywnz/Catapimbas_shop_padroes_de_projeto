@@ -482,6 +482,12 @@
       mostrarNotificacao('E-mail corrigido com sucesso!');
     }
 
+    // Ajusta as URLs padrão caso esteja rodando no Render (produção)
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && window.location.protocol !== 'file:') {
+      document.getElementById('url-api-pedidos').value = 'https://catapimbasshop-order-service.onrender.com';
+      document.getElementById('url-api-notificacoes').value = 'https://catapimbasshop-notification-service.onrender.com';
+    }
+
     testarConexao();
   </script>
 </body>
