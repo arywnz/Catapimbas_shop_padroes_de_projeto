@@ -246,6 +246,18 @@ with app.app_context():
 repositorio_pedido = RepositorioPedidoSql()
 fachada_checkout = FachadaCheckout()
 
+@app.route('/', methods=['GET'])
+def index():
+    return jsonify({
+        'mensagem': 'API do Order Service (Serviço de Pedidos) está ativa!',
+        'rotas_disponiveis': {
+            '/saude': 'GET - Status do serviço',
+            '/finalizar-compra': 'POST - Processar checkout',
+            '/pedidos': 'GET - Listar todos os pedidos',
+            '/pedidos/<id>/status': 'POST - Alterar status do pedido'
+        }
+    }), 200
+
 @app.route('/saude', methods=['GET'])
 def saude():
     return jsonify({'status': 'UP', 'servico': 'order-service'}), 200

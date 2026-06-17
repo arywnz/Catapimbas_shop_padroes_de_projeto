@@ -354,6 +354,7 @@ tr:last-child td {
 }
 .log-meta-tag.sms { color: #f59e0b; }
 .log-meta-tag.email { color: #3b82f6; }
+.log-meta-tag.sistema { color: var(--color-success); }
 
 .log-content {
   color: #d1d5db;

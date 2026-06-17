@@ -214,7 +214,7 @@ class EstrategiaNotificacaoEmail(EstrategiaNotificacao):
             msg.attach(MIMEText(mensagem, 'plain', 'utf-8'))
             msg.attach(MIMEText(html_content, 'html', 'utf-8'))
 
-            server = smtplib.SMTP(smtp_server, smtp_port)
+            server = smtplib.SMTP(smtp_server, smtp_port, timeout=5)
             server.starttls()
             server.login(smtp_user, smtp_password)
             server.sendmail(smtp_user, destinatario, msg.as_string())
@@ -245,6 +245,17 @@ CORS(app)
 
 PORT = int(os.environ.get('PORT', 3002))
 
+@app.route('/', methods=['GET'])
+def index():
+    return jsonify({
+        'mensagem': 'API do Notification Service (Serviço de Notificações) está ativa!',
+        'rotas_disponiveis': {
+            '/saude': 'GET - Status do serviço',
+            '/logs': 'GET - Obter logs estruturados das notificações',
+            '/eventos': 'POST - Processar e enviar notificações'
+        }
+    }), 200
+
 @app.route('/saude', methods=['GET'])
 def saude():
     return jsonify({'status': 'UP', 'servico': 'notification-service'}), 200
@@ -258,7 +269,7 @@ def obter_logs():
         horario = parts[0][1:] if len(parts) > 1 else ""
         msg = parts[1] if len(parts) > 1 else entrada
         
-        canal = 'email'
+        canal = 'sistema' if '[EVENTO]' in msg else 'email'
 
         # Formatar a mensagem do log para português
         mensagem_formatada = msg
