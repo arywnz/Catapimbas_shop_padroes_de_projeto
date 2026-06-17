@@ -11,11 +11,11 @@ from app import app, GerenciadorLog, FabricaEstrategiaNotificacao
 class TestNotificationService(unittest.TestCase):
     def setUp(self):
         self.client = app.test_client()
-        # Resetar o Singleton do log
+        
         GerenciadorLog()._logs.clear()
 
     def test_singleton_gerenciador_log(self):
-        # Teste Unitário TDD verificando o padrão Singleton
+        
         log1 = GerenciadorLog()
         log2 = GerenciadorLog()
         self.assertIs(log1, log2)
@@ -24,7 +24,7 @@ class TestNotificationService(unittest.TestCase):
         self.assertEqual(len(log2.obter_todos()), 1)
 
     def test_metodo_fabrica_estrategia(self):
-        # Teste Unitário TDD para o Factory Method de estratégias de notificação
+        
         email_strat = FabricaEstrategiaNotificacao.criar("email")
         self.assertEqual(email_strat.__class__.__name__, "EstrategiaNotificacaoEmail")
 
@@ -33,10 +33,10 @@ class TestNotificationService(unittest.TestCase):
 
     @unittest.mock.patch('app.smtplib.SMTP')
     def test_api_processar_evento(self, mock_smtp):
-        # Configurar mock do SMTP para simular envio real
+        
         mock_smtp_instance = mock_smtp.return_value
 
-        # Teste de Integração BDD
+        
         evento = {
             'nomeEvento': 'AlteracaoStatusPedido',
             'dados': {

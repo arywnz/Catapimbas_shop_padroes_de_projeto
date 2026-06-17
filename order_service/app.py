@@ -227,7 +227,7 @@ CORS(app)
 PORT = int(os.environ.get('PORT', 3001))
 NOTIFICATION_SERVICE_URL = os.environ.get('NOTIFICATION_SERVICE_URL', 'http://localhost:3002/eventos')
 
-# Carregar variáveis do .env
+
 from dotenv import load_dotenv
 load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env'))
 
@@ -265,7 +265,7 @@ def finalizar_compra():
         if not all([produto, valor, metodo_pagamento, tipo_entrega, cep, email]):
             return jsonify({'error': 'Todos os campos são obrigatórios'}), 400
 
-        # Validação do formato de e-mail usando expressão regular (SOLID - Single Responsibility / Clean Code)
+        # Validação do formato de e-mail 
         import re
         email_regex = r'^[^@\s]+@[^@\s]+\.[^@\s]+$'
         if not email or not re.match(email_regex, email.strip()):
@@ -273,7 +273,7 @@ def finalizar_compra():
 
         pedido = Pedido(produto=produto, valor=valor, nome_cliente=nome_cliente, email=email)
 
-        # Observer Pattern: registra o observador HTTP para disparar webhooks de alteração de status
+        
         observador = ObservadorPedidoHttp(NOTIFICATION_SERVICE_URL, nome_cliente, email)
         pedido.adicionar_observador(observador)
 

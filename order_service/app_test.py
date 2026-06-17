@@ -16,7 +16,7 @@ class TestOrderService(unittest.TestCase):
             db.create_all()
 
     def test_alteracao_status_pedido(self):
-        # Teste Unitário TDD verificando a alteração de status do Pedido
+        
         pedido = Pedido(produto="Teclado Gamer", valor=299.90)
         self.assertEqual(pedido.status, "AGUARDANDO_PAGAMENTO")
         
@@ -24,7 +24,7 @@ class TestOrderService(unittest.TestCase):
         self.assertEqual(pedido.status, "PAGAMENTO_APROVADO")
 
     def test_metodo_fabrica_frete(self):
-        # Teste Unitário TDD verificando o Factory Method de Entrega/Frete
+        
         pac = FabricaEntrega.criar("correios")
         self.assertEqual(pac.nome(), "Correios (PAC)")
         self.assertEqual(pac.calcular_frete("12345-678"), 25.90)
@@ -36,7 +36,7 @@ class TestOrderService(unittest.TestCase):
             FabricaEntrega.criar("invalido")
 
     def test_api_finalizar_compra_e_listar(self):
-        # Teste de Integração BDD usando Flask Client em português
+        
         payload = {
             'nomeCliente': 'João Silva',
             'produto': 'Mouse Gamer',
@@ -47,7 +47,7 @@ class TestOrderService(unittest.TestCase):
             'email': 'teste@email.com'
         }
         
-        # Chamada para /finalizar-compra
+        
         res = self.client.post('/finalizar-compra', 
                               data=json.dumps(payload),
                               content_type='application/json')
@@ -56,7 +56,7 @@ class TestOrderService(unittest.TestCase):
         self.assertIn('idPedido', data)
         self.assertEqual(data['status'], 'PAGAMENTO_APROVADO')
         
-        # Chamada para /pedidos para listagem
+        
         res_list = self.client.get('/pedidos')
         self.assertEqual(res_list.status_code, 200)
         pedidos = json.loads(res_list.data)

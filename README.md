@@ -47,7 +47,7 @@ A estrutura do projeto está organizada em subdiretórios específicos para cada
 ├── notification_service/
 │   ├── app.py                # Contém:
 │   │                         #  - Interfaces de Estratégia
-│   │                         #  - Adaptadores SMTP (E-mail real)
+│   │                         #  - Adaptadores SMTP (email real)
 │   │                         #  - Infraestrutura (Flask server e logs)
 │   ├── app_test.py           # Testes unitários e de API
 │   ├── Dockerfile
@@ -101,8 +101,8 @@ Adaptei os **4 padrões de projeto** do script original para a arquitetura distr
 
 Diferente de implementações mockadas comuns, o Catapimbas Shop realiza disparos **REAIS** de notificações:
 
-* **E-mail Real (SMTP)**:
-  Implementado usando os pacotes nativos do Python `smtplib` e `email.mime`. Ele se conecta de forma segura via TLS a qualquer servidor de email (como o Gmail usando Senhas de App) e envia e-mails formatados com o status e a timeline do pedido.
+* **Email Real (SMTP)**:
+  Implementado usando os pacotes nativos do Python `smtplib` e `email.mime`. Ele se conecta de forma segura via TLS a qualquer servidor de email (como o Gmail usando Senhas de App) e envia emails formatados com o status e a timeline do pedido.
 
 ---
 
@@ -152,7 +152,7 @@ O projeto foi estruturado para deploy instantâneo na plataforma **Render** por 
 
 ---
 
-## 11. Validação Inteligente e Análise de E-mails (UX & Resiliência)
+## 11. Validação Inteligente e Análise de emails e UX
 
 Para prevenir erros comuns de comunicação e garantir que as notificações sejam entregues corretamente aos clientes, implementei uma validação e análise em duas etapas (Client-side e Server-side):
 
