@@ -206,6 +206,35 @@ class EstrategiaNotificacaoEmail(EstrategiaNotificacao):
 </html>
 """
 
+            # Envio via API HTTP do Resend (Porta 443, liberada no Render, só assim funciona no render) irei testar.
+            resend_api_key = env_clean.get("RESEND_API_KEY")
+            if resend_api_key and resend_api_key.strip() != "":
+                try:
+                    payload = {
+                        "from": "onboarding@resend.dev",
+                        "to": destinatario,
+                        "subject": f"Atualização do Pedido #{id_pedido} - Catapimbas Shop",
+                        "html": html_content
+                    }
+                    data = json.dumps(payload).encode('utf-8')
+                    req = urllib.request.Request(
+                        "https://api.resend.com/emails",
+                        data=data,
+                        headers={
+                            "Authorization": f"Bearer {resend_api_key.strip()}",
+                            "Content-Type": "application/json"
+                        },
+                        method="POST"
+                    )
+                    with urllib.request.urlopen(req, timeout=5) as res:
+                        if res.getcode() in [200, 201]:
+                            log.registrar(f"[SUCESSO] E-mail de notificação enviado com sucesso para {destinatario} via Resend")
+                            return True
+                        else:
+                            raise Exception(f"Erro HTTP do Resend: {res.getcode()}")
+                except Exception as e:
+                    log.registrar(f"[ERRO] Falha ao enviar via Resend, tentando SMTP: {e}")
+
             msg = MIMEMultipart('alternative')
             msg['From'] = smtp_user
             msg['To'] = destinatario
