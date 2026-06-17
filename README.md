@@ -97,12 +97,13 @@ Adaptei os **4 padrões de projeto** do script original para a arquitetura distr
 
 ---
 
-## 6. Envio de email
+## 6. Envio de Notificações 
 
-Diferente de implementações mockadas comuns, o Catapimbas Shop realiza disparos **REAIS** de notificações:
+Diferente de implementações estáticas, o Catapimbas Shop foi projetado com um sistema de envio inteligente de notificações com múltiplos comportamentos:
 
-* **Email Real (SMTP)**:
-  Implementado usando os pacotes nativos do Python `smtplib` e `email.mime`. Ele se conecta de forma segura via TLS a qualquer servidor de email (como o Gmail usando Senhas de App) e envia emails formatados com o status e a timeline do pedido.
+* **Modo Simulado (Padrão no Render)**: Devido às restrições de rede do plano gratuito do **Render** (que bloqueia conexões SMTP de saída nas portas 25, 465 e 587 por motivos de segurança contra spam), o sistema entra automaticamente em **Modo Simulado** caso as credenciais não estejam configuradas. Os e-mails e webhooks são processados e exibidos instantaneamente nos logs em tempo real na tela, permitindo demonstrar todo o ciclo de vida do pedido.
+* **Envio Real (SMTP / Gmail local)**: No ambiente local (via Docker ou Python direto), você pode definir as credenciais do Gmail (`SMTP_USER` e `SMTP_PASSWORD` com Senha de App) no arquivo `.env` para disparar e-mails reais formatados com a timeline do pedido.
+* **Envio Real (API HTTP do Resend)**: O código também dá suporte nativo ao envio de e-mails em produção utilizando a API HTTP do **Resend** (porta 443, liberada no Render). Para usar,  adicionando a variável `RESEND_API_KEY` com uma chave ativa no ambiente, mas eu só consigo enviar email para o meu, no plano gratuito aparentemente nao é possivel enviar para vários caso nao tenha um dominio prórpio cadastrado.
 
 ---
 
